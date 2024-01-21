@@ -19,7 +19,7 @@ function goToUrl() {
 
 <template>
   <v-col class="v-col-auto" lg="2" md="3" sm="4" cols="12" @click="goToUrl">
-    <v-card class="card" hover>
+    <v-card class="card">
       <v-img rounded="rounded" height="150" cover :src="imageUrl"></v-img>
       <v-sheet
         class="card__icon-wrapper"

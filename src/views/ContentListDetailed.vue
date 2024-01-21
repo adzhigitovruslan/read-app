@@ -94,12 +94,12 @@ function showAlerts() {
 <template>
   <v-dialog
     transition="dialog-top-transition"
-    width="auto"
+    width="300"
     v-model="isDialogOpen"
   >
     <v-card>
       <v-card-title class="text-center">Выберите сумму</v-card-title>
-      <v-sheet class="pa-5">
+      <v-sheet class="pa-5 d-flex justify-center">
         <v-btn class="mr-5">100р</v-btn>
         <v-btn>150р</v-btn>
       </v-sheet>
