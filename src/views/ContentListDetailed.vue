@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, reactive, ComputedRef } from "vue";
+import { computed, ref, Ref, ComputedRef } from "vue";
 import { useRoute } from "vue-router";
-import { toast, type ToastOptions } from "vue3-toastify";
+
 const route = useRoute();
 
 interface IContent {
@@ -12,18 +12,20 @@ interface IContent {
   imageUrl: string;
 }
 
+const inputSum: Ref<null | number> = ref(250);
 const loading = ref(false);
 const isSupported = ref(false);
-const alertContent = reactive({
-  title: "",
-  content: "",
-  events: [
-    "14.02 состоится встреча..",
-    "Вышла новая книга..",
-    "Встреча переносится на ..",
-  ],
-});
-const alertEventCounter = ref(0);
+const isFavourite = ref(false);
+// const alertContent = reactive({
+//   title: "",
+//   content: "",
+//   events: [
+//     "14.02 состоится встреча..",
+//     "Вышла новая книга..",
+//     "Встреча переносится на ..",
+//   ],
+// });
+const budgesCounter = ref(0);
 const isDialogOpen = ref(false);
 const contentList = ref([
   {
@@ -60,9 +62,6 @@ const content: ComputedRef<IContent | void> = computed(() => {
 });
 
 function makeSupportPayment() {
-  // if (isSupported.value) {
-  //   return;
-  // }
   isDialogOpen.value = false;
   loading.value = true;
   setTimeout(() => {
@@ -70,25 +69,18 @@ function makeSupportPayment() {
     isSupported.value = true;
     showAlerts();
   }, 2000);
-}
-
-function notify() {
-  alertContent.content = alertContent.events[alertEventCounter.value];
-  toast(alertContent.content, {
-    autoClose: 2000,
-    position: toast.POSITION.TOP_RIGHT,
-    onOpen: () => {
-      alertEventCounter.value >= 2
-        ? (alertEventCounter.value = 0)
-        : (alertEventCounter.value += 1);
-    },
-  } as ToastOptions);
+  setTimeout(() => {
+    isSupported.value = false;
+  }, 4000);
 }
 function showAlerts() {
   notify();
   setInterval(() => {
     notify();
   }, 6000);
+}
+function notify() {
+  budgesCounter.value++;
 }
 </script>
 <template>
@@ -98,18 +90,23 @@ function showAlerts() {
     v-model="isDialogOpen"
   >
     <v-card>
-      <v-card-title class="text-center">Выберите сумму</v-card-title>
+      <v-card-title class="text-center">Введите сумму</v-card-title>
       <v-sheet class="pa-5 d-flex justify-center">
-        <v-btn class="mr-5">100р</v-btn>
-        <v-btn>150р</v-btn>
+        <v-text-field
+          prepend-icon="fa-solid fa-credit-card"
+          variant="underlined"
+          type="number"
+          v-model="inputSum"
+        ></v-text-field>
       </v-sheet>
       <v-card-actions class="justify-end">
         <v-btn variant="text" @click="makeSupportPayment">Поддержать</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-sheet
-    class="wrapper d-flex flex-column flex-sm-row flex-md-row flex-lg-row flex-xl-row"
+  <v-card
+    flat
+    class="wrapper d-flex flex-column flex-sm-row flex-md-row flex-lg-row flex-xl-row pb-2"
   >
     <v-img
       rounded="rounded"
@@ -124,24 +121,54 @@ function showAlerts() {
         {{ content?.contentTitle }}
       </div>
       <div class="text-subtitle-1 text-left">{{ content?.author }}</div>
-      <v-btn
-        class="card__btn"
-        :ripple="false"
-        :loading="loading"
-        @click="isDialogOpen = true"
-        >поддержать
-        <template v-slot:append v-if="!isSupported">
-          <v-icon icon="fa-solid fa-circle-check" color="primary"></v-icon>
-        </template>
-        <template v-slot:append v-else>
-          <v-icon
-            icon="fa-solid fa-circle-check"
-            color="success"
-          ></v-icon> </template
-      ></v-btn>
     </v-sheet>
-  </v-sheet>
-  <v-sheet class="text-body-1 text-left pt-10">{{ content?.content }}</v-sheet>
+  </v-card>
+  <v-sheet class="text-body-1 text-left pt-10 pb-10">{{
+    content?.content
+  }}</v-sheet>
+  <v-footer class="bottom-sheet">
+    <v-btn
+      class="card__button"
+      :ripple="false"
+      :loading="loading"
+      @click="isDialogOpen = true"
+    >
+      <span class="card__button-text">поддержать</span>
+      <div class="card__icon-wrapper">
+        <v-icon
+          class="w-100"
+          icon="fa-solid fa-credit-card"
+          v-if="!isSupported"
+        ></v-icon>
+        <v-icon
+          class="w-100"
+          icon="fa-solid fa-circle-check"
+          color="success"
+          v-if="isSupported"
+        ></v-icon></div
+    ></v-btn>
+    <v-btn
+      class="card__button"
+      :ripple="false"
+      @click="isFavourite = !isFavourite"
+    >
+      <span class="card__button-text">в избранное</span>
+      <div class="card__icon-wrapper" v-if="!isFavourite">
+        <v-icon class="w-100" icon="fa-regular fa-heart"></v-icon>
+      </div>
+      <div class="card__icon-wrapper" v-else>
+        <v-icon class="w-100" icon="fa-solid fa-heart" color="#f49d06"></v-icon>
+      </div>
+    </v-btn>
+    <v-btn class="card__button" :ripple="false">
+      <span class="card__button-text">уведомления</span>
+      <div class="card__icon-wrapper">
+        <v-badge :content="budgesCounter">
+          <v-icon class="w-100" icon="fa-solid fa-bell" stacked></v-icon>
+        </v-badge>
+      </div>
+    </v-btn>
+  </v-footer>
 </template>
 
 <style scoped lang="scss">
@@ -153,14 +180,38 @@ function showAlerts() {
       margin-left: 40px;
     }
     @media (max-width: 599px) {
-      margin-top: 40px;
+      margin-top: 25px;
     }
   }
-  &__btn {
-    margin-top: auto;
+  &__button-text {
     @media (max-width: 600px) {
-      margin-top: 20px;
+      display: none;
     }
   }
+  &__icon-wrapper {
+    @media (min-width: 601px) {
+      margin-left: 5px;
+    }
+  }
+}
+.actions-button {
+  @media (max-width: 599px) {
+    margin-top: 25px !important;
+  }
+  @media (max-width: 435px) {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+.bottom-sheet {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background-color: #f5f2f2;
 }
 </style>
