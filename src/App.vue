@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const overlay = ref(false);
+const overlay = ref(true);
 
-// setTimeout(() => {
-//   overlay.value = false;
-// }, 2000);
+setTimeout(() => {
+  overlay.value = false;
+}, 2000);
 </script>
 
 <template>
