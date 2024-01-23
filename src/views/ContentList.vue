@@ -33,15 +33,17 @@ const contentList = ref([
 ]);
 </script>
 <template>
-  <v-row>
-    <BookItem
-      v-for="obj in contentList"
-      :key="obj.id"
-      :id="obj.id"
-      :title="obj.contentTitle"
-      :author="obj.author"
-      :content="obj.content"
-      :image-url="obj.imageUrl"
-    />
-  </v-row>
+  <v-container>
+    <v-row>
+      <BookItem
+        v-for="obj in contentList"
+        :key="obj.id"
+        :id="obj.id"
+        :title="obj.contentTitle"
+        :author="obj.author"
+        :content="obj.content"
+        :image-url="obj.imageUrl"
+      />
+    </v-row>
+  </v-container>
 </template>

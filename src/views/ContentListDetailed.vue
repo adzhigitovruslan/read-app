@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, Ref, ComputedRef } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 
 interface IContent {
   id: number;
@@ -15,17 +16,9 @@ interface IContent {
 const inputSum: Ref<null | number> = ref(250);
 const loading = ref(false);
 const isSupported = ref(false);
+const acceptIconVisible = ref(false);
 const isFavourite = ref(false);
-// const alertContent = reactive({
-//   title: "",
-//   content: "",
-//   events: [
-//     "14.02 состоится встреча..",
-//     "Вышла новая книга..",
-//     "Встреча переносится на ..",
-//   ],
-// });
-const budgesCounter = ref(0);
+const events: Ref<{ [key: string]: string }[]> = ref([]);
 const isDialogOpen = ref(false);
 const contentList = ref([
   {
@@ -67,108 +60,131 @@ function makeSupportPayment() {
   setTimeout(() => {
     loading.value = false;
     isSupported.value = true;
+    acceptIconVisible.value = true;
     showAlerts();
   }, 2000);
   setTimeout(() => {
-    isSupported.value = false;
+    acceptIconVisible.value = false;
   }, 4000);
 }
 function showAlerts() {
-  notify();
   setInterval(() => {
     notify();
-  }, 6000);
+  }, 4000);
 }
 function notify() {
-  budgesCounter.value++;
+  events.value.push({
+    event: "Название события",
+    content: "Содержание события",
+  });
 }
 </script>
 <template>
-  <v-dialog
-    transition="dialog-top-transition"
-    width="300"
-    v-model="isDialogOpen"
-  >
-    <v-card>
-      <v-card-title class="text-center">Введите сумму</v-card-title>
-      <v-sheet class="pa-5 d-flex justify-center">
-        <v-text-field
-          prepend-icon="fa-solid fa-credit-card"
-          variant="underlined"
-          type="number"
-          v-model="inputSum"
-        ></v-text-field>
+  <v-container>
+    <v-dialog
+      transition="dialog-top-transition"
+      width="300"
+      v-model="isDialogOpen"
+    >
+      <v-card>
+        <v-card-title class="text-center">Введите сумму</v-card-title>
+        <v-sheet class="pa-5 d-flex justify-center">
+          <v-text-field
+            class="input"
+            prepend-icon="fa-solid fa-credit-card"
+            variant="underlined"
+            type="number"
+            v-model="inputSum"
+          >
+            <span class="input__currency">руб</span>
+          </v-text-field>
+        </v-sheet>
+        <v-card-actions class="justify-end">
+          <v-btn variant="text" @click="makeSupportPayment">Поддержать</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-card
+      flat
+      class="wrapper d-flex flex-column flex-sm-row flex-md-row flex-lg-row flex-xl-row pb-2"
+    >
+      <v-img
+        rounded="rounded"
+        :src="content?.imageUrl"
+        height="250"
+        width="250"
+        class="flex-0-1"
+        cover
+      ></v-img>
+      <v-sheet class="card__content">
+        <div class="text-h4 text-left font-weight-medium">
+          {{ content?.contentTitle }}
+        </div>
+        <div class="text-subtitle-1 text-left">{{ content?.author }}</div>
       </v-sheet>
-      <v-card-actions class="justify-end">
-        <v-btn variant="text" @click="makeSupportPayment">Поддержать</v-btn>
-      </v-card-actions>
     </v-card>
-  </v-dialog>
-  <v-card
-    flat
-    class="wrapper d-flex flex-column flex-sm-row flex-md-row flex-lg-row flex-xl-row pb-2"
-  >
-    <v-img
-      rounded="rounded"
-      :src="content?.imageUrl"
-      height="250"
-      width="250"
-      class="flex-0-1"
-      cover
-    ></v-img>
-    <v-sheet class="card__content">
-      <div class="text-h4 text-left font-weight-medium">
-        {{ content?.contentTitle }}
-      </div>
-      <div class="text-subtitle-1 text-left">{{ content?.author }}</div>
-    </v-sheet>
-  </v-card>
-  <v-sheet class="text-body-1 text-left pt-10 pb-10">{{
-    content?.content
-  }}</v-sheet>
-  <v-footer class="bottom-sheet">
-    <v-btn
-      class="card__button"
-      :ripple="false"
-      :loading="loading"
-      @click="isDialogOpen = true"
-    >
-      <span class="card__button-text">поддержать</span>
-      <div class="card__icon-wrapper">
-        <v-icon
-          class="w-100"
-          icon="fa-solid fa-credit-card"
-          v-if="!isSupported"
-        ></v-icon>
-        <v-icon
-          class="w-100"
-          icon="fa-solid fa-circle-check"
-          color="success"
-          v-if="isSupported"
-        ></v-icon></div
-    ></v-btn>
-    <v-btn
-      class="card__button"
-      :ripple="false"
-      @click="isFavourite = !isFavourite"
-    >
-      <span class="card__button-text">в избранное</span>
-      <div class="card__icon-wrapper" v-if="!isFavourite">
-        <v-icon class="w-100" icon="fa-regular fa-heart"></v-icon>
-      </div>
-      <div class="card__icon-wrapper" v-else>
-        <v-icon class="w-100" icon="fa-solid fa-heart" color="#f49d06"></v-icon>
-      </div>
-    </v-btn>
-    <v-btn class="card__button" :ripple="false">
-      <span class="card__button-text">уведомления</span>
-      <div class="card__icon-wrapper">
-        <v-badge :content="budgesCounter">
-          <v-icon class="w-100" icon="fa-solid fa-bell" stacked></v-icon>
-        </v-badge>
-      </div>
-    </v-btn>
-  </v-footer>
+    <v-sheet class="text-body-1 text-left pt-10 pb-10">{{
+      content?.content
+    }}</v-sheet>
+    <v-footer class="bottom-sheet">
+      <v-btn
+        :class="['card__button']"
+        :ripple="false"
+        :loading="loading"
+        @click="isDialogOpen = true"
+      >
+        <span class="card__button-text">поддержать</span>
+        <div class="card__icon-wrapper">
+          <v-icon
+            class="w-100"
+            icon="fa-solid fa-credit-card"
+            v-if="!acceptIconVisible"
+          ></v-icon>
+          <v-icon
+            class="w-100"
+            icon="fa-solid fa-circle-check"
+            color="success"
+            v-if="acceptIconVisible"
+          ></v-icon></div
+      ></v-btn>
+      <v-btn
+        class="card__button"
+        :ripple="false"
+        @click="isFavourite = !isFavourite"
+      >
+        <span class="card__button-text">в избранное</span>
+        <div class="card__icon-wrapper" v-if="!isFavourite">
+          <v-icon class="w-100" icon="fa-regular fa-heart"></v-icon>
+        </div>
+        <div class="card__icon-wrapper" v-else>
+          <v-icon
+            class="w-100"
+            icon="fa-solid fa-heart"
+            color="#f49d06"
+          ></v-icon>
+        </div>
+      </v-btn>
+      <v-btn
+        :class="['card__button']"
+        :disabled="!isSupported"
+        :ripple="false"
+        @click="router.push({ name: 'notification' })"
+      >
+        <span class="card__button-text">уведомления</span>
+        <div class="card__icon-wrapper">
+          <v-icon class="w-100" icon="fa-solid fa-bell"></v-icon>
+          <v-badge
+            color="#f49d06"
+            dot
+            offset-y="-15"
+            offset-x="2"
+            v-if="events.length > 0"
+          >
+          </v-badge>
+        </div>
+      </v-btn>
+    </v-footer>
+  </v-container>
 </template>
 
 <style scoped lang="scss">
@@ -213,5 +229,13 @@ function notify() {
   right: 0;
   width: 100%;
   background-color: #f5f2f2;
+}
+
+.input {
+  position: relative;
+  &__currency {
+    position: absolute;
+    right: 0;
+  }
 }
 </style>

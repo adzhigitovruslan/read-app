@@ -6,11 +6,17 @@ export default createRouter({
   routes: [
     {
       path: "/",
+      name: "home",
       component: ContentList,
     },
     {
       path: "/book/:id",
       component: () => import("../views/ContentListDetailed.vue"),
+    },
+    {
+      path: "/notification/",
+      name: "notification",
+      component: () => import("../views/ContentNotification.vue"),
     },
   ],
 });

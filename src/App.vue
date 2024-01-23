@@ -12,9 +12,13 @@ setTimeout(() => {
   <v-overlay scroll-strategy="block" class="overlay" v-model="overlay">
     <div class="text-h4">Essey</div>
   </v-overlay>
-  <v-layout class="wrapper">
+  <v-layout>
     <v-main>
-      <router-view></router-view>
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
     </v-main>
   </v-layout>
 </template>
