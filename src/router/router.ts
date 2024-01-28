@@ -10,6 +10,26 @@ export default createRouter({
       component: ContentList,
     },
     {
+      path: "/auth",
+      component: () => import("../layouts/AuthLayout.vue"),
+      children: [
+        {
+          path: "",
+          redirect: { name: "login" },
+        },
+        {
+          path: "login",
+          name: "login",
+          component: () => import("../components/auth/LoginPage.vue"),
+        },
+        {
+          path: "signup",
+          name: "signup",
+          component: () => import("../components/auth/SignUpPage.vue"),
+        },
+      ],
+    },
+    {
       path: "/book/:id",
       component: () => import("../views/ContentListDetailed.vue"),
     },

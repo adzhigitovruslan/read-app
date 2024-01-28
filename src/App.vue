@@ -1,26 +1,35 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ITokens } from "./interfaces/Store";
+import { useAuthStore } from "./stores/auth";
 
-const overlay = ref(true);
+const storeAuth = useAuthStore();
 
-setTimeout(() => {
-  overlay.value = false;
-}, 2000);
+async function checkUser() {
+  try {
+    const tokens = localStorage.getItem("tokens");
+    const localId = localStorage.getItem("localId");
+
+    if (!(tokens && localId)) {
+      return;
+    }
+
+    storeAuth.tokens = JSON.parse(tokens) as ITokens;
+    storeAuth.userInfo.localId = JSON.parse(localId) as string;
+    await storeAuth.fetchUser();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+checkUser();
 </script>
 
 <template>
-  <v-overlay scroll-strategy="block" class="overlay" v-model="overlay">
-    <div class="text-h4">Essey</div>
-  </v-overlay>
-  <v-layout>
-    <v-main>
-      <router-view v-slot="{ Component }">
-        <keep-alive>
-          <component :is="Component" />
-        </keep-alive>
-      </router-view>
-    </v-main>
-  </v-layout>
+  <router-view v-slot="{ Component }">
+    <!-- <transition mode="out-in"> -->
+    <component :is="Component" />
+    <!-- </transition> -->
+  </router-view>
 </template>
 
 <style scoped lang="scss">
@@ -28,10 +37,12 @@ setTimeout(() => {
   min-height: 100vh;
 }
 
-.overlay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #999999;
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s;
+}
+.v-enter,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

@@ -3,9 +3,10 @@ import { ref } from "vue";
 import router from "../router/router";
 
 const props = defineProps<{
-  id: number;
+  id?: string | number | undefined;
   title: string;
-  author: string;
+  name: string;
+  surname: string;
   content: string;
   imageUrl: string;
 }>();
@@ -13,6 +14,7 @@ const props = defineProps<{
 const isFavourite = ref(false);
 
 function goToUrl() {
+  if (!props.id) return;
   router.push("/book/" + props.id);
 }
 </script>
@@ -47,11 +49,14 @@ function goToUrl() {
           rounded="rounded"
           color="hsla(0,0%,100%,.8)"
         >
-          <v-icon class="card__icon" icon="fa-solid fa-credit-card" size="small" />
+          <v-icon
+            class="card__icon"
+            icon="fa-solid fa-credit-card"
+            size="small"
+          />
         </v-card>
       </v-container>
-
-      <v-card-title class="text-left"> {{ author }} </v-card-title>
+      <v-card-title class="text-left"> {{ name }} {{ surname }} </v-card-title>
       <v-card-text class="text-left"> {{ title }} </v-card-text>
     </v-card>
   </v-col>
