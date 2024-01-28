@@ -18,9 +18,14 @@ export const useAuthStore = defineStore("auth", {
       email: "",
       localId: "",
       addedAuthors: new Set(),
+      readLaterArr: new Set(),
     },
   }),
-  getters: {},
+  getters: {
+    token(state) {
+      return state.tokens.idToken;
+    },
+  },
   actions: {
     async onAuth(payload: { email: string; password: string }, type: string) {
       const store = useMainStore();
@@ -95,9 +100,10 @@ export const useAuthStore = defineStore("auth", {
       }
     },
     async createUser(localId: string, email: string) {
+      const storeAuth = useAuthStore();
       try {
         const res = await axios.post(
-          Endpoints.fbURL + Endpoints.users + ".json",
+          Endpoints.fbURL + Endpoints.users + ".json?auth=" + storeAuth.token,
           {
             localId,
             email,
@@ -122,6 +128,7 @@ export const useAuthStore = defineStore("auth", {
         userId: "",
         localId: "",
         addedAuthors: null,
+        readLaterArr: null,
       };
     },
     async fetchAllUsers() {
@@ -135,6 +142,7 @@ export const useAuthStore = defineStore("auth", {
             ...this.userInfo,
             ...response.data[user],
             addedAuthors: new Set(response.data[user].addedAuthors),
+            readLaterArr: new Set(response.data[user].readLater),
             userId: user,
           };
         }

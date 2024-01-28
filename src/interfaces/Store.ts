@@ -22,6 +22,7 @@ export interface IUserInfo {
   userId: string;
   localId: string;
   addedAuthors: Set<string> | null;
+  readLaterArr: Set<string> | null;
 }
 
 export interface StateMain {

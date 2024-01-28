@@ -32,7 +32,7 @@ checkUser();
   </router-view>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 #app {
   min-height: 100vh;
 }

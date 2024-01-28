@@ -49,22 +49,66 @@ export const useMainStore = defineStore("main", {
       }
     },
     async addAuthorToFav() {
-      const storeAuth = useAuthStore();
-      let addedAuthorsArr: string[] = [];
-      const authorId = this.post?.author.id;
-      if (authorId && storeAuth.userInfo.addedAuthors) {
-        storeAuth.userInfo.addedAuthors.add(authorId);
+      try {
+        const storeAuth = useAuthStore();
+        let addedAuthorsArr: string[] = [];
+        const authorId = this.post?.author.id;
+        if (authorId && storeAuth.userInfo.addedAuthors) {
+          storeAuth.userInfo.addedAuthors.add(authorId);
 
-        addedAuthorsArr = Array.from(storeAuth.userInfo.addedAuthors);
+          addedAuthorsArr = Array.from(storeAuth.userInfo.addedAuthors);
+        }
+
+        const res = await axios.patch(
+          `${Endpoints.fbURL}${Endpoints.users}/${storeAuth.userInfo.userId}.json?auth=${storeAuth.token}`,
+          {
+            addedAuthors: addedAuthorsArr,
+          },
+        );
+        return res;
+      } catch (error) {
+        throw error;
       }
+    },
+    async addPostToReadLater(postId: string) {
+      try {
+        const storeAuth = useAuthStore();
 
-      const res = await axios.patch(
-        `${Endpoints.fbURL}${Endpoints.users}/${storeAuth.userInfo.userId}.json`,
-        {
-          addedAuthors: addedAuthorsArr,
-        },
-      );
-      return res;
+        let readLaterArr: string[] = [];
+        if (storeAuth.userInfo.readLaterArr) {
+          storeAuth.userInfo.readLaterArr.add(postId);
+
+          readLaterArr = Array.from(storeAuth.userInfo.readLaterArr);
+        }
+
+        const res = await axios.patch(
+          `${Endpoints.fbURL}${Endpoints.users}/${storeAuth.userInfo.userId}.json?auth=${storeAuth.token}`,
+          { readLater: readLaterArr },
+        );
+        return res;
+      } catch (error) {
+        throw error;
+      }
+    },
+    async deletePostFromReadLater(postId: string) {
+      try {
+        const storeAuth = useAuthStore();
+
+        let readLaterArr: string[] = [];
+        if (storeAuth.userInfo.readLaterArr) {
+          storeAuth.userInfo.readLaterArr.delete(postId);
+
+          readLaterArr = Array.from(storeAuth.userInfo.readLaterArr);
+        }
+
+        const res = await axios.patch(
+          `${Endpoints.fbURL}${Endpoints.users}/${storeAuth.userInfo.userId}.json?auth=${storeAuth.token}`,
+          { readLater: readLaterArr },
+        );
+        return res;
+      } catch (error) {
+        throw error;
+      }
     },
   },
 });

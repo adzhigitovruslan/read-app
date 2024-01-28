@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, Ref } from "vue";
 import router from "../router/router";
+import { useAuthStore } from "../stores/auth";
+import { useMainStore } from "../stores/main";
+const storeAuth = useAuthStore();
+const storeMain = useMainStore();
 
 const props = defineProps<{
   id?: string | number | undefined;
@@ -11,11 +15,59 @@ const props = defineProps<{
   imageUrl: string;
 }>();
 
-const isFavourite = ref(false);
+const postId = String(props.id);
+const isFavourite = ref(storeAuth.userInfo.readLaterArr?.has(postId) || false);
 
 function goToUrl() {
   if (!props.id) return;
   router.push("/book/" + props.id);
+}
+
+const debounce = <F extends (...args: any[]) => any>(
+  func: F,
+  ms: number,
+  toggleVal?: Ref<boolean>,
+  id?: string,
+) => {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return (): Promise<ReturnType<F>> =>
+    new Promise((resolve) => {
+      if (!storeAuth.token) {
+        router.push({ name: "login" });
+        return;
+      }
+      if (toggleVal) toggleVal.value = !toggleVal.value;
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+
+      timeout = setTimeout(() => resolve(func(toggleVal, id)), ms);
+    });
+};
+
+const debouncedFavPost = debounce(addToReadLater, 1000, isFavourite, postId);
+
+let oldFavVal = false;
+async function addToReadLater(toggleVal: Ref<boolean>, postId: string) {
+  try {
+    if (oldFavVal !== toggleVal.value && toggleVal.value === true) {
+      await storeMain.addPostToReadLater(postId);
+    } else if (oldFavVal !== toggleVal.value && toggleVal.value === false) {
+      await storeMain.deletePostFromReadLater(postId);
+    } else {
+      return;
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    oldFavVal = toggleVal.value;
+  }
+}
+
+async function makeSupportPayment() {
+  if (!storeAuth.token) return;
+  console.log("supported");
 }
 </script>
 
@@ -28,7 +80,7 @@ function goToUrl() {
           class="d-inline-flex pa-1"
           rounded="rounded"
           color="hsla(0,0%,100%,.8)"
-          @click.stop="isFavourite = !isFavourite"
+          @click.stop="debouncedFavPost"
         >
           <v-icon
             class="card__icon"
@@ -48,6 +100,7 @@ function goToUrl() {
           class="d-inline-flex pa-1"
           rounded="rounded"
           color="hsla(0,0%,100%,.8)"
+          @click.stop="makeSupportPayment"
         >
           <v-icon
             class="card__icon"

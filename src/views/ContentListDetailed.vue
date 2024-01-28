@@ -13,6 +13,7 @@ const route = useRoute();
 
 const inputSum: Ref<null | number> = ref(250);
 const loading = ref(false);
+const postId = String(route.params.id);
 const isSupported = computed(() => {
   if (storeMain.post?.author.id) {
     return storeAuth.userInfo.addedAuthors?.has(storeMain.post.author.id);
@@ -21,7 +22,7 @@ const isSupported = computed(() => {
   }
 });
 const acceptIconVisible = ref(false);
-const isFavourite = ref(false);
+const isFavourite = ref(storeAuth.userInfo.readLaterArr?.has(postId) || false);
 const events: Ref<{ [key: string]: string }[]> = ref([]);
 const isDialogOpen = ref(false);
 const post: Ref<undefined | IPost> = ref();
@@ -39,6 +40,47 @@ async function makeSupportPayment() {
     setTimeout(() => {
       acceptIconVisible.value = false;
     }, 4000);
+  }
+}
+
+const debounce = <F extends (...args: any[]) => any>(
+  func: F,
+  ms: number,
+  toggleVal?: Ref<boolean>,
+  id?: string,
+) => {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return (): Promise<ReturnType<F>> =>
+    new Promise((resolve) => {
+      if (!storeAuth.token) {
+        router.push({ name: "login" });
+        return;
+      }
+      if (toggleVal) toggleVal.value = !toggleVal.value;
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+
+      timeout = setTimeout(() => resolve(func(toggleVal, id)), ms);
+    });
+};
+
+const debouncedFavPost = debounce(addToReadLater, 1000, isFavourite, postId);
+let oldFavVal = false;
+async function addToReadLater(toggleVal: Ref<boolean>, postId: string) {
+  try {
+    if (oldFavVal !== toggleVal.value && toggleVal.value === true) {
+      await storeMain.addPostToReadLater(postId);
+    } else if (oldFavVal !== toggleVal.value && toggleVal.value === false) {
+      await storeMain.deletePostFromReadLater(postId);
+    } else {
+      return;
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    oldFavVal = toggleVal.value;
   }
 }
 
@@ -126,11 +168,7 @@ onMounted(async () => {
                 v-if="acceptIconVisible"
               ></v-icon></div
           ></v-btn>
-          <v-btn
-            class="card__button"
-            :ripple="false"
-            @click="isFavourite = !isFavourite"
-          >
+          <v-btn class="card__button" :ripple="false" @click="debouncedFavPost">
             <span class="card__button-text">в избранное</span>
             <div class="card__icon-wrapper" v-if="!isFavourite">
               <v-icon class="w-100" icon="fa-regular fa-heart"></v-icon>

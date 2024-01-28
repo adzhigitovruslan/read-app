@@ -31,7 +31,11 @@ onMounted(() => {
 <template>
   <v-app>
     <v-overlay class="overlay" v-model="storeMain.isOverlayActive">
-      <div class="text-h4">Essey</div>
+      <div class="d-flex ga-5 justify-center align-center flex-column">
+        <div class="overlay__text title">Essey</div>
+        <v-divider class="overlay__text w-25 border-opacity-100"></v-divider>
+        <div class="overlay__text subtitle">read significance</div>
+      </div>
     </v-overlay>
     <v-toolbar>
       <v-spacer></v-spacer>
@@ -50,7 +54,7 @@ onMounted(() => {
         logout
       </v-btn>
     </v-toolbar>
-    <v-container class="pa-2" v-if="!storeMain.loading">
+    <v-container class="pa-5" v-if="!storeMain.loading">
       <v-row>
         <BookItem
           v-for="obj in storeMain.getPosts"
@@ -64,7 +68,7 @@ onMounted(() => {
         />
       </v-row>
     </v-container>
-    <v-container class="pa-2 d-flex h-100 justify-center align-center" v-else>
+    <v-container class="pa-5 d-flex h-100 justify-center align-center" v-else>
       <TheLoader></TheLoader>
     </v-container>
   </v-app>
@@ -75,6 +79,17 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #999999;
+  background-color: #e6e2d5;
+  &__text {
+    &.title {
+      font-size: 60px;
+    }
+    &.subtitle {
+      font-size: 40px;
+      @media (max-width: 390px) {
+        font-size: 35px;
+      }
+    }
+  }
 }
 </style>
