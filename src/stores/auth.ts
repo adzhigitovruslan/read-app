@@ -3,7 +3,7 @@ import axios from "axios";
 import { StateAuth } from "../interfaces/Store";
 import { Endpoints } from "../interfaces/Enums";
 import { useMainStore } from "./main";
-const apiKey = process.env.env.VITE_API_KEY_FIREBASE;
+const apiKey = process.env.VITE_API_KEY_FIREBASE;
 
 export const useAuthStore = defineStore("auth", {
   state: (): StateAuth => ({
