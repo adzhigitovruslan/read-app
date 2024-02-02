@@ -3,4 +3,6 @@ export enum Endpoints {
   fbURLAuth = "https://identitytoolkit.googleapis.com/v1/accounts:",
   posts = "posts",
   users = "users",
+  tags = "tags",
+  authors = "authors",
 }

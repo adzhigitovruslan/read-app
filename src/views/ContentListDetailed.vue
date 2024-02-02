@@ -136,15 +136,15 @@ onMounted(async () => {
             cover
           ></v-img>
           <v-sheet class="card__content">
-            <div class="text-h4 text-left font-weight-medium">
+            <div class="card__title text-left font-weight-medium">
               {{ post?.["content-title"] }}
             </div>
-            <div class="text-subtitle-1 text-left">
+            <div class="card__subtitle text-left">
               {{ post?.author.name }} {{ post?.author.surname }}
             </div>
           </v-sheet>
         </v-card>
-        <v-sheet class="text-body-1 text-left pt-10 pb-10">{{
+        <v-sheet class="card__main-text text-left pt-10 pb-10">{{
           post?.content
         }}</v-sheet>
         <v-footer class="bottom-sheet">
@@ -211,11 +211,34 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .card {
+  &__title {
+    font-weight: 600;
+    font-size: 34px;
+    @media (max-width: 1200px) {
+      font-size: calc(22px + (34 - 22) * ((100vw - 320px) / (1200 - 320)));
+    }
+  }
+  &__subtitle {
+    font-weight: 500;
+    font-size: 28px;
+    @media (max-width: 1200px) {
+      font-size: calc(22px + (28 - 22) * ((100vw - 320px) / (1200 - 320)));
+    }
+  }
+  &__main-text {
+    font-weight: 500;
+    font-size: 25px;
+    @media (max-width: 1200px) {
+      font-size: calc(20px + (25 - 20) * ((100vw - 320px) / (1200 - 320)));
+    }
+  }
   &__content {
     display: flex;
     flex-direction: column;
+    gap: 15px;
     @media (min-width: 600px) {
       margin-left: 40px;
+      width: 65%;
     }
     @media (max-width: 599px) {
       margin-top: 25px;

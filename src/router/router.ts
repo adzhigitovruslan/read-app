@@ -7,7 +7,23 @@ export default createRouter({
     {
       path: "/",
       name: "home",
-      component: ContentList,
+      redirect: { name: "content" },
+    },
+    {
+      path: "/content/",
+      name: "content",
+      component: () => import("../views/ContentList.vue"),
+    },
+    {
+      path: "/authors/",
+      name: "authors",
+      component: () => import("../views/ContentAuthors.vue"),
+    },
+    {
+      path: "/authors/:id",
+      name: "author",
+      component: () => import("../views/AuthorDetailPage.vue"),
+      props: true,
     },
     {
       path: "/auth",
@@ -34,9 +50,10 @@ export default createRouter({
       component: () => import("../views/ContentListDetailed.vue"),
     },
     {
-      path: "/notification/",
+      path: "/notification/:id",
       name: "notification",
       component: () => import("../views/ContentNotification.vue"),
+      props: true,
     },
   ],
 });

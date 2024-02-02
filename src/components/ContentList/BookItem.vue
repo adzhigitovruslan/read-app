@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, Ref } from "vue";
-import router from "../router/router";
-import { useAuthStore } from "../stores/auth";
-import { useMainStore } from "../stores/main";
+import router from "../../router/router";
+import { useAuthStore } from "../../stores/auth";
+import { useMainStore } from "../../stores/main";
 const storeAuth = useAuthStore();
 const storeMain = useMainStore();
 
@@ -72,8 +72,8 @@ async function makeSupportPayment() {
 </script>
 
 <template>
-  <v-col class="v-col-auto" lg="2" md="3" sm="4" cols="12" @click="goToUrl">
-    <v-card class="card">
+  <v-col class="posts__col" @click="goToUrl">
+    <v-card class="card h-100">
       <v-img rounded="rounded" height="150" cover :src="imageUrl"></v-img>
       <v-container class="card__icon-wrapper">
         <v-card
@@ -134,6 +134,12 @@ async function makeSupportPayment() {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+}
+.posts {
+  &__col {
+    max-width: 220px;
+    width: 100%;
   }
 }
 </style>

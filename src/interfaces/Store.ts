@@ -2,6 +2,9 @@ export interface IAuthor {
   id: string;
   name: string;
   surname: string;
+  imgUrl: string;
+  description: string;
+  notifications: { [key: string]: INotification };
 }
 export interface IPost {
   id: string;
@@ -9,6 +12,13 @@ export interface IPost {
   content: string;
   "content-title": string;
   "image-url": string;
+  tags: string[];
+}
+
+export interface INotification {
+  'id': string;
+  'title': string;
+  'content': string;
 }
 
 export interface ITokens {
@@ -30,6 +40,9 @@ export interface StateMain {
   post: null | IPost;
   loading: boolean;
   isOverlayActive: boolean;
+  tags: string[];
+  authors: IAuthor[];
+  author: null | IAuthor;
 }
 
 export interface StateAuth {
