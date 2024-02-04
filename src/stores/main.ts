@@ -13,6 +13,7 @@ export const useMainStore = defineStore("main", {
     tags: [],
     authors: [],
     author: null,
+    collections: [],
   }),
   getters: {
     getPosts: (state) => state.posts,
@@ -20,6 +21,7 @@ export const useMainStore = defineStore("main", {
     getTags: (state) => state.tags,
     getAuthors: (state) => state.authors,
     getAuthor: (state) => state.author,
+    getCollections: (state) => state.collections,
   },
   actions: {
     async fetchAllPosts() {
@@ -30,7 +32,7 @@ export const useMainStore = defineStore("main", {
           Endpoints.fbURL + Endpoints.posts + ".json",
         );
         for (const key in res.data) {
-          allPosts.push({ ...(res.data[key] as IPost), id: key.slice(1) }); // // Id's problem with -, remove it after
+          allPosts.push({ ...(res.data[key] as IPost), id: key.slice(1) }); // Id's problem with -, remove it after
         }
         this.posts = allPosts;
         return res;
@@ -125,6 +127,24 @@ export const useMainStore = defineStore("main", {
           allTags.push(key);
         }
         this.tags = allTags;
+        return res;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async fetchAllCollections() {
+      const allCollections = [] as string[];
+      this.loading = true;
+      try {
+        const res = await axios.get(
+          Endpoints.fbURL + Endpoints.collections + ".json",
+        );
+        for (const key of res.data) {
+          allCollections.push(key);
+        }
+        this.collections = allCollections;
         return res;
       } catch (error) {
         console.log(error);

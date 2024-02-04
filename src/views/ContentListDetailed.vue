@@ -136,12 +136,14 @@ onMounted(async () => {
             cover
           ></v-img>
           <v-sheet class="card__content">
-            <div class="card__title text-left font-weight-medium">
+            <div class="card__title text-left font-weight-block">
               {{ post?.["content-title"] }}
             </div>
-            <div class="card__subtitle text-left">
-              {{ post?.author.name }} {{ post?.author.surname }}
-            </div>
+            <router-link class="card__link" :to="'/authors/' + post?.author.id">
+              <div class="card__subtitle text-left">
+                {{ post?.author.name }} {{ post?.author.surname }}
+              </div>
+            </router-link>
           </v-sheet>
         </v-card>
         <v-sheet class="card__main-text text-left pt-10 pb-10">{{
@@ -211,6 +213,11 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .card {
+  &__link {
+    text-decoration: none;
+    color: inherit;
+    font-weight: 500;
+  }
   &__title {
     font-weight: 600;
     font-size: 34px;

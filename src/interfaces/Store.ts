@@ -13,12 +13,13 @@ export interface IPost {
   "content-title": string;
   "image-url": string;
   tags: string[];
+  collection: string;
 }
 
 export interface INotification {
-  'id': string;
-  'title': string;
-  'content': string;
+  id: string;
+  title: string;
+  content: string;
 }
 
 export interface ITokens {
@@ -43,6 +44,7 @@ export interface StateMain {
   tags: string[];
   authors: IAuthor[];
   author: null | IAuthor;
+  collections: string[];
 }
 
 export interface StateAuth {

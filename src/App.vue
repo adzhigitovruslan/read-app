@@ -30,6 +30,7 @@ const getAllData = async () => {
     storeMain.fetchAllPosts();
     storeMain.fetchAllTags();
     storeMain.fetchAllAuthors();
+    storeMain.fetchAllCollections();
   } catch (error) {
     console.log(error);
   }

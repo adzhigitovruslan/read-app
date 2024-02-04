@@ -1,7 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=GFS+Didot&display=swap');
 
+html {
+  overflow-y: auto;
+}
+
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
   font-family: 'GFS Didot', serif;
 }
 

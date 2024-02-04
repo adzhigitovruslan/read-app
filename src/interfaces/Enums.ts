@@ -5,4 +5,5 @@ export enum Endpoints {
   users = "users",
   tags = "tags",
   authors = "authors",
+  collections = 'collections'
 }

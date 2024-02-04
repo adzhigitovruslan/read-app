@@ -140,6 +140,9 @@ async function makeSupportPayment() {
   &__col {
     max-width: 220px;
     width: 100%;
+    @media (max-width: 599px) {
+      max-width: 280px;
+    }
   }
 }
 </style>

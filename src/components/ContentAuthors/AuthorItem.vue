@@ -13,15 +13,22 @@ defineProps<{
 <template>
   <v-list-item
     class="text-left list-item"
-    :title="`${name} ${surname}`"
-    :prepend-avatar="imgUrl"
     @click="router.push('/authors/' + id)"
   >
+    <template v-slot:prepend>
+      <v-avatar size="60" :image="imgUrl"></v-avatar>
+    </template>
+    <v-list-item-title class="list-title"
+      >{{ name }} {{ surname }}</v-list-item-title
+    >
   </v-list-item>
 </template>
 
 <style scoped>
 .list-item {
   cursor: pointer;
+}
+.list-title {
+  font-size: 24px;
 }
 </style>

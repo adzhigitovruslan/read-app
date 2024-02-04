@@ -5,20 +5,30 @@ import TheLoader from "../components/UI/TheLoader.vue";
 import { useMainStore } from "../stores/main";
 
 const storeMain = useMainStore();
-const getFilteredPosts = computed(() => (tag: string) => {
-  return storeMain.posts.filter((post) => post.tags && post.tags.includes(tag));
+const getFilteredPosts = computed(() => (selectedCollection: string) => {
+  return storeMain.posts.filter(
+    (post) =>
+      post.collection &&
+      post.collection.toLowerCase().includes(selectedCollection.toLowerCase()),
+  );
 });
 </script>
 <template>
   <v-app>
     <v-container class="pa-4" v-if="!storeMain.loading">
       <v-row class="posts__row">
-        <template v-for="tag in storeMain.getTags" :key="tag">
-          <div class="posts__wrapper" v-if="getFilteredPosts(tag).length !== 0">
-            <h1 class="posts__title">{{ tag }}</h1>
+        <template
+          v-for="collection in storeMain.getCollections"
+          :key="collection"
+        >
+          <div
+            class="posts__wrapper"
+            v-if="getFilteredPosts(collection).length !== 0"
+          >
+            <h1 class="posts__title">{{ collection }}</h1>
             <div class="posts__item-wrapper">
               <BookItem
-                v-for="obj in getFilteredPosts(tag)"
+                v-for="obj in getFilteredPosts(collection)"
                 :key="obj.id"
                 :id="obj.id"
                 :title="obj['content-title']"
@@ -52,6 +62,9 @@ const getFilteredPosts = computed(() => (tag: string) => {
     width: 100%;
     padding-left: 12px;
     text-align: left;
+    @media (max-width: 599px) {
+      max-width: 280px;
+    }
   }
   &__row {
     flex-direction: column;

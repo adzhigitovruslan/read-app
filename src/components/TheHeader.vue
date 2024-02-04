@@ -10,14 +10,14 @@ const storeAuth = useAuthStore();
       <router-link
         active-class="active"
         class="nav__btn"
-        :to="{ name: 'authors' }"
-        >Авторы</router-link
+        :to="{ name: 'content' }"
+        >Подборки</router-link
       >
       <router-link
         active-class="active"
         class="nav__btn"
-        :to="{ name: 'content' }"
-        >Подборки</router-link
+        :to="{ name: 'authors' }"
+        >Авторы</router-link
       >
     </div>
     <v-spacer></v-spacer>
